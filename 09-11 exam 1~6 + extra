@@ -1,0 +1,199 @@
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	unsigned char i;
+	unsigned char portData=0x80;
+	
+	unsigned int a = 1000; 
+
+	
+	unsigned char b = a;
+	unsigned char c = a>>8;
+
+	while(1)
+	{
+	DDRA = 0xFF;
+	
+	PORTA = b;
+
+	_delay_ms(1000);
+
+	PORTA = c;
+
+	_delay_ms(1000);
+	}	
+	while(1);
+	return (1);
+}
+
+
+
+
+//////////////////////////////
+
+
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	
+
+	char a = -2;
+
+
+	while(1)
+	{
+	DDRA = 0xFF;
+	
+	PORTA = a;
+
+	_delay_ms(1000);
+
+	//PORTA = c;
+
+	//_delay_ms(1000);
+	}	
+	while(1);
+	return (1);
+}
+
+
+////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	unsigned char i;
+	unsigned char a;
+
+	unsigned int LB = 0x1;
+	unsigned int RB = 0x8;
+
+	DDRA = 0xFF;
+
+
+	while(1)
+	{
+
+		
+		for(i = 0; i< 4 ; ++i)
+		{
+			if(LB == 0x8){break;}
+			a = LB;
+			a=	a << 4;
+			a += RB;
+			
+			PORTA = a;
+			_delay_ms(100);
+		
+			LB = LB<<1;
+			RB = RB>>1;
+		}
+		for(i = 0; i< 4 ; ++i)
+		{
+		if(LB == 0x1){break;}
+			a = LB;
+			a=	a << 4;
+			a += RB;
+			
+			PORTA = a;
+			_delay_ms(100);
+			
+			LB = LB>>1;
+			RB = RB<<1;
+		}
+
+	}
+	while(1);
+	return (1);
+}
+
+
+///////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	unsigned char i;
+	unsigned char a = 0x1;
+
+
+	DDRA = 0xFF;
+
+	
+	while(1)
+	{
+		for(i = 0; i<8 ; i++)
+		{	
+			PORTA = a;
+			_delay_ms(100);
+			a = a<<1;
+			a+=1;
+		}
+		for(i = 0; i<8 ; i++)
+		{
+			PORTA = a;
+			_delay_ms(100);
+			a-=1;
+			a = a>>1;
+		}
+
+	}
+	while(1);
+	return (1);
+}
+
+
+/////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	unsigned char i;
+	unsigned char a = 0x1;
+
+
+	DDRA = 0xFF;
+
+	
+	while(1)
+	{
+		for(i = 0; i<8 ; i++)
+		{	
+			PORTA = a;
+			_delay_ms(100);
+			a= a | (a<<1);
+			
+		}
+		for(i = 0; i<7 ; i++)
+		{
+			PORTA = a;
+			_delay_ms(100);
+			a= a&(a>>1);
+		}
+	
+
+	}
+	while(1);
+	return (1);
+}

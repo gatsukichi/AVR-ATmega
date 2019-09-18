@@ -1,0 +1,309 @@
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	DDRA = 0xFF;
+
+	DDRE = DDRE & 0xCF;
+	
+	unsigned char counter = 0x00;
+		
+		while(1)
+		{
+			
+			if((PINE & 0x10)==0x00)
+			{
+				_delay_ms(300);
+				++ counter;
+			}
+			PORTA = counter;
+		}
+
+	while(1);
+	return (1);
+}
+
+
+////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	DDRA = 0xFF;
+
+	DDRE = DDRE & 0xCF;
+	
+	unsigned char counter = 0x01;
+		
+		while(1)
+		{
+			PORTA = counter;
+
+			if((PINE & 0x20)==0x00)
+			{
+				_delay_ms(300);
+				counter++;
+			}
+			if((PINE & 0x10)==0x00)
+			{
+				_delay_ms(300);
+				counter--;
+			}
+		}
+
+	while(1);
+	return (1);
+}
+
+
+////////////////////////////////////
+
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+
+int main()
+{
+	DDRA = 0xFF;
+
+	DDRE = DDRE & 0xCF;
+	
+	unsigned char counter = 0x00;
+		
+		while(1)
+		{
+			while(1)
+			{
+				if((PINE & 0x10)==0x00)
+				{
+					_delay_ms(300);
+					if((PINE & 0x10)!=0x00)
+					{
+						++ counter;
+						break;
+					}
+				}
+			}
+			PORTA = counter;
+		}
+
+	while(1);
+	return (1);
+}
+
+
+///////////////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+int main()
+{
+	DDRA = 0xFF;
+	DDRE = DDRE & 0xCF;
+	
+	unsigned char counter = 0x00;
+
+
+	while(1)
+	{
+		if((PINE & 0x10)==0x00)
+			{
+					counter<<=1;
+					counter +=1;
+					PORTA = counter;
+					_delay_ms(300);
+			}
+		if((PINE & 0x20)==0x00)
+			{
+					counter>>=1;
+					PORTA = counter;
+					_delay_ms(300);
+			}
+			
+	}
+	while(1);
+	return (1);
+}
+
+//////////////////
+
+
+1046,1174,1318,1397,1568,1760,1795,2093
+
+3 2 1 2 3 3 3 2 2 2 3 5 5 3 2 1 2 3 3 3 2 2 3 2 1
+
+
+
+////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+void s1();
+void s2();
+void s3();
+void s4();
+void s5();
+void s6();
+void s7();
+void s8();
+unsigned int halfCycle = 0x1000;
+	volatile unsigned long int i,j;
+int main()
+{
+	DDRE = DDRE & 0xCF;
+	DDRB = DDRB | 0x10;
+	
+	
+	
+
+	s3();
+	s2();
+	s1();
+	s2();
+	s3();
+	s3();
+	s3();
+	s2();
+	s2();
+	s2();
+	s3();
+	s5();
+	s5();
+	s3();
+	s2();
+	s1();
+	s2();
+	s3();
+	s3();
+	s3();
+	s2();
+	s2();
+	s3();
+	s2();
+	s1();
+
+
+
+
+
+	while(1);
+	return (1);
+}
+
+void s1()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(478);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s2()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(425);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s3()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(379);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s4()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(357);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s5()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(318);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s6()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(284);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s7()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(258);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+void s8()
+{
+	for(j=0;j<2000;j++){
+	_delay_us(238);
+	PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+	}
+}
+
+	
+/////
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+void buzzer(int hz);
+int main()
+{
+	DDRE = DDRE & 0xCF;
+	DDRB = DDRB | 0x10;
+	
+	int sol[7] = {65,73,82,87,98,110,123};
+	int ms,us;
+	unsigned int halfCycle = 0x1000;
+	volatile unsigned long int i;
+	int j;
+	while(1){
+		if((PINE & 0x20) == 0x00)
+			halfCycle+=10;
+		if((PINE & 0x10) == 0x00)
+			halfCycle-=10;
+		for(i = 0 ; i< halfCycle ; ++i)
+			;
+		//PORTB = PORTB ^ 0x10; //toggle PB4 (buzzer)
+		
+		ms=(int)(500/(float)65);
+		us = ((500/(float)65)-ms)*1000;
+
+		for(j=0;j<7;j++)
+		{
+			buzzer(sol[j]);	
+		}
+
+	while(1);
+	return (1);
+}
+
+void buzzer(int hz)
+{
+	ms=(int)(500/(float)hz);
+	us = ((500/(float)hz)-ms)*1000;
+	PORTB = 0x10;
+	_delay_ms(ms);
+	_delay_us(us);
+	PORTB = 0x00;
+	_delay_ms(ms);
+	_delay_us(us);	
+}

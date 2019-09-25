@@ -1,0 +1,292 @@
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+
+	PORTC = 0xFF;
+	PORTG=0x01;
+	
+	while(1)
+	{
+	_delay_ms(500);
+	PORTG<<=1;
+	if(PORTG == 0x08){
+		_delay_ms(500);
+		PORTG = 0x01;
+		}
+	}
+
+	while(1);
+	return (1);
+}
+
+
+////////////////////////////////////////////
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+
+	PORTC = 0xFF;
+
+	
+	PORTG=0x01;
+
+	while(1){
+	PORTC = 0x3F;
+	_delay_ms(500);
+	PORTC = 0x06;
+	_delay_ms(500);
+	PORTC = 0x5B;
+	_delay_ms(500);
+	PORTC = 0x4F;
+	_delay_ms(500);
+	PORTC = 0x66;
+	_delay_ms(500);
+	PORTC = 0x6D;
+	_delay_ms(500);
+	PORTC = 0x7D;
+	_delay_ms(500);
+	PORTC = 0x07;
+	_delay_ms(500);
+	PORTC = 0x7F;
+	_delay_ms(500);
+	PORTC = 0x6F;
+	_delay_ms(500);
+	}
+	while(1);
+	return (1);
+}
+
+/////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+
+	PORTC = 0xFF;
+
+	
+	PORTG=0x01;
+
+	while(1){
+	PORTC = 0x77;
+	_delay_ms(500);
+	PORTC = 0x7C;
+	_delay_ms(500);
+	PORTC = 0x39;
+	_delay_ms(500);
+	PORTC = 0x5E;
+	_delay_ms(500);
+	PORTC = 0x79;
+	_delay_ms(500);
+	PORTC = 0x71;
+	_delay_ms(500);
+	}
+	while(1);
+	return (1);
+}
+
+
+///////////////////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+
+	PORTG = 0xFF;
+	volatile unsigned long int i,j;
+	int n=0;
+	int numseg[10] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; // 0 1 2 3 4 5 6 7 8 9
+
+
+	while(1)
+	{
+	PORTC = numseg[n];
+	_delay_ms(300);
+	n++;
+	}
+	
+	
+	while(1);
+	return (1);
+}
+
+/////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+
+	PORTG = 0xFF;
+	volatile unsigned long int i,j;
+	int n=0;
+	int numseg[] = {0x77,0x7C,0x39,0x5E,0x79,0x71}; // 0 1 2 3 4 5 6 7 8 9
+
+
+	while(1)
+	{
+	PORTC = numseg[n];
+	_delay_ms(500);
+	n++;
+	}
+	
+	
+	while(1);
+	return (1);
+}
+
+///////////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+	int num[] = {0x7F,0x79,0x4F,0x3F};
+	
+	int i;
+
+	while(1)
+	{	
+		PORTG = 0x01;
+		for(i=0;i<4;++i)
+		{
+			PORTC=num[i];
+			
+			_delay_us(500);
+			PORTG <<=1;
+		}
+		
+	}
+	
+	while(1);
+	return (1);
+}
+
+////////////////////////////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+
+int main()
+{
+	
+	DDRC = 0xFF;
+	DDRG |= 0x0F;
+
+	unsigned int n[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x039,0x5E,0x79,0x71};
+	int i=0;
+
+
+
+	
+	signed int inum = -78;    //user input
+	
+	signed int num = -inum;
+
+
+	signed int s1=0,s2=0,s3=0,s4=0;
+
+
+	s1 = num % 16;
+	
+	if(num/16 !=0)
+	{
+		s2 = (num /16)%16;
+		if((num/16)/16 != 0)
+		{
+			s3 = ((num/16)/16)%16;
+			if(((num/16)/16)/16 !=0)
+			{
+				s4= (((num/16)/16)/16)%16;
+			}
+		}
+	}
+
+	if(inum == 0)
+	{
+		s1 = ~s1;
+		s2 = ~s2;
+		s3 = ~s3;
+		s4 = ~s4;	
+
+		s1 ++;
+		if(s1 == 0) // is full !
+			s2 ++;
+			if(s2 == 0)
+				s3 ++;
+				if(s3 == 0)
+					s4++;
+
+
+	}
+
+	
+	
+
+	while(1)
+	{	
+		PORTG = 0x01;
+		for(i=0;i<4;++i)
+		{
+			PORTC=n[s1];
+			_delay_us(500);
+			PORTG <<=1;
+			
+			PORTC=n[s2];
+			_delay_us(500);
+			PORTG <<=1;
+
+			PORTC=n[s3];
+			_delay_us(500);
+			PORTG <<=1;
+
+			PORTC=n[s4];
+			_delay_us(500);
+			PORTG <<=1;
+			
+		}
+		
+	}
+	
+	
+	
+	while(1);
+	return (1);
+}
+
+

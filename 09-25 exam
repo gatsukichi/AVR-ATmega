@@ -338,19 +338,19 @@ int main()
 		if(s1 == 0)
 			s1 = 0xF;
 		else
-			s1 = 0x10 - s1;
+			s1 = 0xF - s1+1;
 		if(s2 == 0)
 			s2 = 0xF;
 		else
-			s2 = 0x10 - s2;
+			s2 = 0xF - s2;
 		if(s3 == 0)
 			s3 = 0xF;
 		else
-			s3 = 0x10 - s3;
+			s3 = 0xF - s3;
 		if(s4 == 0)
 			s4 = 0xF;
 		else
-			s4 = 0x10 - s4;
+			s4 = 0xF - s4;
 	}
 	
 	

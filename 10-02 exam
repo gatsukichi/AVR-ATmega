@@ -1,0 +1,30 @@
+#include<avr/io.h>
+#include<avr/interrupt.h>
+volatile unsigned char counter;
+int main()
+{
+	DDRA = 0xFF;
+	PORTA = 0x00;
+	
+	//-----------------------------------------------------------
+	EICRA = 0x00;
+	EICRB = 0x0A;
+	EIMSK = 0x30;
+	sei();
+	//-----------------------------------------------------------
+	
+	counter = 0x00;
+	do{
+		PORTA = counter;
+	}
+	while(1);
+	return(1);
+}
+ISR(INT4_vect)
+{
+	++counter;
+}
+ISR(INT5_vect)
+{
+	--counter;
+}

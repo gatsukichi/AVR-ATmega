@@ -1,0 +1,327 @@
+#include<avr/io.h>
+#define OVERFLOW 256
+#define TICKS_PER_SEC 1000
+
+int main()
+{
+	unsigned int tick_time = 0;
+	
+	DDRA = 0xFF; //포트A 를 출력포트로 설정
+	
+	TCNT0 = OVERFLOW - 125;
+	TCCR0 = 0x05; // 16MHz 를 128분주
+	
+	for(;;)
+	{
+		while((TIFR & 0x01)) {
+			TIFR |= 0x01;
+			TCNT0 = OVERFLOW - 125;
+			tick_time++;
+			if(tick_time==TICKS_PER_SEC){
+				PORTA = ~PORTA;
+				tick_time = 0;
+			}
+		}	
+		
+	}
+	return (1);
+}
+
+////////////////////////////////////////////////////////
+#include<avr/io.h>
+#define OVERFLOW 256
+#define TICKS_PER_SEC 500
+
+int main()
+{
+	unsigned int tick_time = 0;
+	
+	DDRA = 0xFF; //포트A 를 출력포트로 설정
+	
+	TCNT0 = OVERFLOW - 125;
+	TCCR0 = 0x05; // 16MHz 를 128분주
+	PORTA = 0x80;
+	for(;;)
+	{
+		
+		while((TIFR & 0x01)) {
+			TIFR |= 0x01;
+			TCNT0 = OVERFLOW - 125;
+			tick_time++;
+			if(tick_time==TICKS_PER_SEC){
+				PORTA>>=1;
+				tick_time = 0;
+			}
+			if(PORTA == 0x00){
+				PORTA = 0x80;
+			}
+		}	
+		
+		
+	}
+	return (1);
+}
+//////////////////////////////////////////
+#include<avr/io.h>
+#define OVERFLOW 256
+#define TICKS_PER_SEC 1000
+
+int main()
+{
+	unsigned int tick_time = 0;
+	
+	DDRA = 0xFF; //포트A 를 출력포트로 설정
+	
+	TCNT0 = OVERFLOW - 125;
+	TCCR0 = 0x04; // 16MHz 를 128분주 -> 64분주
+	PORTA = 0x80;
+	for(;;)
+	{
+		
+		while((TIFR & 0x01)) {
+			TIFR |= 0x01;
+			TCNT0 = OVERFLOW - 125;
+			tick_time++;
+			if(tick_time==TICKS_PER_SEC){
+				PORTA>>=1;
+				tick_time = 0;
+			}
+			if(PORTA == 0x00){
+				PORTA = 0x80;
+			}
+		}	
+		
+		
+	}
+	return (1);
+}
+
+////////////////////////////////
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define OVERFLOW 256
+
+unsigned int tick_time = 0;
+unsigned int TPS=1000;
+int main()
+{
+	
+	
+	DDRA = 0xFF; //포트A 를 출력포트로 설정
+	
+	TCNT0 = OVERFLOW - 125;
+	TCCR0 = 0x05; // 16MHz 를 128분주 -> 64분주
+	PORTA = 0xFF;
+	
+	
+	//-----------------------------------------------------------
+	EICRA = 0x00;
+	EICRB = 0x0F;
+	EIMSK = 0x30;
+	sei();
+	//-----------------------------------------------------------
+	
+	
+	
+	
+	for(;;)
+	{
+		
+		while((TIFR & 0x01)) {
+			TIFR |= 0x01;
+			TCNT0 = OVERFLOW - 125;
+			tick_time++;
+			if(tick_time==TPS){
+				PORTA=~PORTA;
+				tick_time = 0;
+			}
+			
+		}	
+		
+		
+	}
+	return (1);
+}
+
+ISR(INT4_vect)
+{
+	TPS=1000;
+	tick_time=0;
+}
+ISR(INT5_vect)
+{
+	TPS=500;
+	tick_time=0;
+}
+
+//////////////////////////////////////////////
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define OVERFLOW 256
+
+unsigned int tick_time = 0;
+unsigned int TPS=1000;
+int main()
+{
+	
+	
+	DDRA = 0xFF; //포트A 를 출력포트로 설정
+	
+	TCNT0 = OVERFLOW - 125;
+	TCCR0 = 0x05; // 16MHz 를 128분주 -> 64분주
+	PORTA = 0xFF;
+	
+	
+	
+	
+	for(;;)
+	{
+		
+		while((TIFR & 0x01)) {
+			TIFR |= 0x01;
+			TCNT0 = OVERFLOW - 125;
+			tick_time++;
+			if(tick_time==TPS){
+				PORTA=~PORTA;
+				tick_time = 0;
+			}
+			if((PINE & 0x10)==0x00){
+				TPS=1000;
+				tick_time=0;
+			}
+			if((PINE & 0x20)==0x00){
+				TPS=500;
+				tick_time=0;
+			}
+		}	
+		
+		
+	}
+	return (1);
+}
+
+/////////////////////////////////////////////
+
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+#define OVERFLOW 256
+#define TPS 1000
+
+void display(unsigned int*,unsigned int,unsigned int,unsigned int,unsigned int);
+int main()
+{
+	
+	unsigned int tick_time = 0;
+	DDRG |= 0x0F;
+	DDRC = 0xFF;
+	
+	TCNT0 = OVERFLOW - 125;
+	TCCR0 = 0x05; // 16MHz 를 128분주 -> 64분주
+	PORTA = 0xFF;
+	unsigned int n[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; // 0~9  7-segment
+	//unsigned int sec=0;
+	unsigned int s1=0,s2=0,s3=0,s4=0; // [ s4 ] [ s3 ] [ s2 ] [ s1 ] <- 7-segment LED
+	
+	
+	
+	for(;;)
+	{
+		///////////////////////////
+		while((TIFR & 0x01)) {
+			
+			TIFR |= 0x01;
+			TCNT0 = OVERFLOW - 125;
+			tick_time++;
+			if(tick_time==TPS){
+				s1++;
+				tick_time = 0;
+			}
+			////////////////////////////
+			display(n,s1,s2,s3,s4);
+			if(s1 == 10){
+				s1 = 0;
+				s2++;
+			}
+			if(s2 == 6){
+				s1 = 0;
+				s2 = 0;
+				s3++;
+			}
+			if(s3 == 10){
+				s1=0;
+				s2=0;
+				s3=0;
+				s4++;
+			}
+		}	
+		
+		
+	}
+	return (1);
+}
+
+void display(unsigned int* n,unsigned int s1,unsigned int s2,unsigned int s3,unsigned int s4)
+{
+	int i=0;
+	PORTG = 0x01;
+	
+	for(i=0;i<2;++i)
+	{
+		PORTC=n[s1];
+		_delay_us(50);
+		PORTG <<=1;
+		
+		PORTC=n[s2];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s3];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s4];
+		_delay_us(50);
+		PORTG <<=1;
+	}
+}
+
+///////////////////////////////////////
+
+#include<avr/io.h>
+#define OVERFLOW 65536
+#define TICKS_PER_SEC 500
+
+int main()
+{
+	unsigned int tick_time = 0;
+	
+	DDRA = 0xFF; //포트A 를 출력포트로 설정
+	
+	
+	//TCCR0 = 0x05; // 16MHz 를 128분주
+	TCNT1 = OVERFLOW-125;
+	TCCR1A=0x00;
+	TCCR1B   = 0X04;// 128 분주 // 65536
+	
+	
+	PORTA = 0xff;
+	for(;;)
+	{
+		while((TIFR & 0x04)) {
+			TIFR |= 0x04;
+			TCNT1 = OVERFLOW- 125;
+			tick_time++;
+			if(tick_time==TICKS_PER_SEC){
+				PORTA = ~PORTA;
+				tick_time = 0;
+			}
+		}
+		
+	}
+	return (1);
+}
+
+////////////////////////////////////////////
+

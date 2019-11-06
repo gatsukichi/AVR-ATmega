@@ -1,0 +1,373 @@
+#include<avr/io.h>
+#include <avr/interrupt.h>
+#define OVERFLOW 256
+#define TICKS_PER_SEC 500 
+unsigned int tick_time;
+ISR(TIMER0_OVF_vect)
+{
+	TCNT0 = OVERFLOW-125;
+	tick_time++;
+	if(tick_time == TICKS_PER_SEC) { 
+		PORTA >>= 1;
+		tick_time = 0;
+		if(PORTA == 0){
+			PORTA = 0x80;
+		}
+	}
+}
+int main()
+{
+	DDRA = 0xFF;
+	PORTA=0x80; // LD1 점등 초기값
+	///////////////////////////
+	TCNT0 = OVERFLOW - 125;
+	TIMSK = 0x01;       // 타이머0 오버플로우 인터럽트 허용 
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	TCCR0 = 0x05;       // 16MHz를 128분주
+	while(1);
+	return (1);
+}
+//////////////////////////////////////////////////////////
+
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+#define OVERFLOW 256
+#define TPS 1000
+void display(unsigned int*,unsigned int,unsigned int,unsigned int,unsigned int);
+unsigned int tick_time;
+unsigned int s1=0,s2=0,s3=0,s4=0; // [ s4 ] [ s3 ] [ s2 ] [ s1 ] <- 7-segment LED
+unsigned int n[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; // 0~9  7-segment
+int main()
+{
+	DDRG |= 0x0F;
+	DDRC = 0xFF;
+	TCCR0 = 0x05;       // 16MHz를 128분주
+	///////////////////////////
+	TCNT0 = OVERFLOW - 125;
+	TIMSK = 0x01;       // 타이머0 오버플로우 인터럽트 허용 
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	
+	while(1){
+		if(s1==10){
+			s1=0;
+			s2++;
+		}
+		if(s2==6){
+			s2=0;
+			s3++;
+		}
+		if(s3==10){
+			s3=0;
+			s4++;
+		}
+		display(n,s1,s2,s3,s4);
+	}
+	return (1);
+}
+ISR(TIMER0_OVF_vect)
+{
+	TCNT0 = OVERFLOW-125;
+	tick_time++;
+	if(tick_time == TPS) {
+		s1++;
+		tick_time = 0;
+	}
+}
+void display(unsigned int* n,unsigned int s1,unsigned int s2,unsigned int s3,unsigned int s4)
+{
+	int i=0;
+	PORTG = 0x01;
+	
+	for(i=0;i<2;++i)
+	{
+		PORTC=n[s1];
+		_delay_us(50);
+		PORTG <<=1;
+		
+		PORTC=n[s2];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s3];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s4];
+		_delay_us(50);
+		PORTG <<=1;
+	}
+}
+////////////////////////////////////////////
+
+#include<avr/io.h>
+#include <avr/interrupt.h>
+#define OVERFLOW 65536
+#define TICKS_PER_SEC 250
+unsigned int tick_time;
+ISR(TIMER1_OVF_vect)
+{
+	TCNT1 = OVERFLOW-125;
+	tick_time++;
+	if(tick_time == TICKS_PER_SEC) {
+		PORTA >>= 1;
+		tick_time = 0;
+		if(PORTA == 0){
+			PORTA = 0x80;
+		}
+	}
+}
+int main()
+{
+	//TCCR1A=0x00; // default값임
+	TCCR1B=0x04; // 256분주
+	DDRA = 0xFF;
+	PORTA=0x80; // LD1 점등 초기값
+	///////////////////////////
+	TCNT1 = OVERFLOW - 125;
+	TIMSK = 0x04;       // 타이머1 오버플로우 인터럽트 허용
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	while(1);
+	return (1);
+}
+
+////////////////////////////////////////////
+
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+#define OVERFLOW 65536
+#define TPS 500
+void display(unsigned int*,unsigned int,unsigned int,unsigned int,unsigned int);
+unsigned int tick_time;
+unsigned int s1=0,s2=0,s3=0,s4=0; // [ s4 ] [ s3 ] [ s2 ] [ s1 ] <- 7-segment LED
+unsigned int n[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; // 0~9  7-segment
+int main()
+{
+	DDRG |= 0x0F;
+	DDRC = 0xFF;
+	TCCR1B = 0x04;       // 16MHz를 256분주
+	///////////////////////////
+	TCNT1 = OVERFLOW - 125;
+	TIMSK = 0x04;       // 타이머1 오버플로우 인터럽트 허용
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	
+	while(1){
+		if(s1==10){
+			s1=0;
+			s2++;
+		}
+		if(s2==6){
+			s2=0;
+			s3++;
+		}
+		if(s3==10){
+			s3=0;
+			s4++;
+		}
+		display(n,s1,s2,s3,s4);
+	}
+	return (1);
+}
+ISR(TIMER1_OVF_vect)
+{
+	TCNT1 = OVERFLOW-125;
+	tick_time++;
+	if(tick_time == TPS) {
+		s1++;
+		tick_time = 0;
+	}
+}
+void display(unsigned int* n,unsigned int s1,unsigned int s2,unsigned int s3,unsigned int s4)
+{
+	int i=0;
+	PORTG = 0x01;
+	
+	for(i=0;i<2;++i)
+	{
+		PORTC=n[s1];
+		_delay_us(50);
+		PORTG <<=1;
+		
+		PORTC=n[s2];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s3];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s4];
+		_delay_us(50);
+		PORTG <<=1;
+	}
+}
+
+/////////////////////////////////////////
+
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+#define OVERFLOW_1 65536
+#define OVERFLOW_0 256
+#define TPS_1 500
+#define TPS_0 20
+void display(unsigned int*,unsigned int,unsigned int,unsigned int,unsigned int);
+unsigned int tick_time_0,tick_time_1;
+unsigned int s1=0,s2=0,s3=0,s4=0; // [ s4 ] [ s3 ] [ s2 ] [ s1 ] <- 7-segment LED
+unsigned int n[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F}; // 0~9  7-segment
+int main()
+{
+	DDRG |= 0x0F;
+	DDRC = 0xFF;
+	TCCR0=0x05;
+	TCCR1B = 0x04;       // 16MHz를 256분주
+	///////////////////////////
+	TCNT1 = OVERFLOW_1 - 125;
+	TIMSK = 0x05;       // 타이머1 오버플로우 인터럽트 허용
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	
+	while(1){
+		if(s1==10){
+			s1=0;
+			s2++;
+		}
+		if(s2==6){
+			s2=0;
+			s3++;
+		}
+		if(s3==10){
+			s3=0;
+			s4++;
+		}
+		display(n,s1,s2,s3,s4);
+	}
+	return (1);
+}
+ISR(TIMER1_OVF_vect)
+{
+	TCNT1 = OVERFLOW_1-125;
+	tick_time_1++;
+	if(tick_time_1 == TPS_1) {
+		s1++;
+		tick_time_1 = 0;
+	}
+}
+ISR(TIMER0_OVF_vect)
+{
+	TCNT0=OVERFLOW_0 - 125;
+	tick_time_0++;
+	if(tick_time_0 == TPS_0) {
+		display(n,s1,s2,s3,s4);
+		tick_time_0 = 0;
+	}
+	
+}
+void display(unsigned int* n,unsigned int s1,unsigned int s2,unsigned int s3,unsigned int s4)
+{
+	int i=0;
+	PORTG = 0x01;
+	
+	for(i=0;i<2;++i)
+	{
+		PORTC=n[s1];
+		_delay_us(50);
+		PORTG <<=1;
+		
+		PORTC=n[s2];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s3];
+		_delay_us(50);
+		PORTG <<=1;
+
+		PORTC=n[s4];
+		_delay_us(50);
+		PORTG <<=1;
+	}
+}
+
+////////////////////////////////////////
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#define OVERFLOW 256
+#define TICKS_PER_SEC 1000
+unsigned int tick_time;
+ISR(TIMER0_COMP_vect)    // 출력 비교 일치 인터럽트 서비스 루틴 
+{
+	tick_time++;
+	if(tick_time == TICKS_PER_SEC) {
+		PORTA = ~PORTA;
+		tick_time = 0;
+	}
+}
+int main()
+{
+	DDRA=0xFF;
+	DDRB |= (1 << DDB4);    // OC0 핀(PB4) 출력 설정
+	//OCR0 = 125/2;         // 출력 비교 레지스터 값 설정 1khz
+	OCR0 = 125/4;         // 출력 비교 레지스터 값 설정 2khz
+	//OCR0 = 125/8;         // 출력 비교 레지스터 값 설정 3khz
+	//OCR0 = 125/16;         // 출력 비교 레지스터 값 설정 4khz
+	TCNT0 = 0;
+	TIMSK = 0x02;       // 타이머0 출력 비교 인터럽트 허용
+	sei();                 // 전역 인터럽트 허용
+	TCCR0 = 0x1D;      // 16MHz를 128분주, 비교 일치시 OC0 출력 반전, TCNT0 <- 0
+	// 1ms 마다 출력이 반전되므로 주기가 2ms, 즉 500Hz의
+	// 구형파가 발생한다
+	while(1);
+	return(1);
+}
+
+/////////////////////////////////////////////
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define OVERFLOW_1 65536
+#define OVERFLOW_0 256
+#define TPS_1 500
+#define TPS_0 20
+unsigned int tick_time_0,tick_time_1;
+int i=0;
+int n[] = {239,213,189,179,159,142,126,119};
+int main()
+{
+	DDRB |=(1<<DDB4);
+	DDRA = 0xFF;
+	PORTA = 0xFF;
+	TCCR0=0x05; // 16mhz 128분주
+	TCCR1B = 0x04;  // 16MHz를 256분주
+	OCR0=n[i]; // 
+	TCNT0 = 0;
+	///////////////////////////
+	TCNT1 = OVERFLOW_1 - 250; // 125를 2배로할당하여 2초지연 할당
+	TIMSK = 0x06;       // 타이머0는 compare 0x02, 타이머1 오버플로우 인터럽트 허용
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	TCCR0 = 0x1D;
+	while(1);
+	return (1);
+}
+ISR(TIMER1_OVF_vect) // 2초 시간 지연 줄것
+{
+	TCNT1 = OVERFLOW_1-250; // 125였던것을 250으로 두배 증가시켜서 2초로 할당
+	tick_time_1++;
+	if(tick_time_1 == TPS_1) {
+		i++;
+		PORTA = ~PORTA;
+		tick_time_1 = 0;
+	}
+}
+ISR(TIMER0_COMP_vect)
+{
+	OCR0=n[i];
+	
+}

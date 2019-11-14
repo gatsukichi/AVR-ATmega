@@ -1,0 +1,116 @@
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+#define OVERFLOW_1 65536
+#define OVERFLOW_0 256
+#define TPS_1 500
+#define TPS_0 20
+unsigned int tick_time_0,tick_time_1;
+int i=0;
+int n[] = {239,213,189,179,159,142,126,119}; // 도 레 미 파 솔 라 시 도 - 8계단
+int school[] = {159,159,142,142,159,159,189,189,159,159,189,189,213,213,213,0,159,159,142,142,159,159,189,159,159,213,189,239,239,0};
+int main()
+{
+	DDRB |=(1<<DDB4);
+	DDRA = 0xFF;
+	PORTA = 0xFF;
+	TCCR0=0x05; // 16mhz 128분주
+	TCCR1B = 0x04;  // 16MHz를 256분주
+	//OCR0=n[i]; 
+	TCNT0 = 0;
+	///////////////////////////
+	TCNT1 = OVERFLOW_1 - 250; // 125를 2배로할당하여 2초지연 할당
+	TIMSK = 0x06;       // 타이머0는 compare 0x02, 타이머1 오버플로우 인터럽트 허용
+	sei();                 // 전역 인터럽트 허용
+	////////////////////
+	TCCR0 = 0x1D;
+	
+	while(1){
+		//_delay_ms(250);
+		OCR0=0x00;
+	}
+	return (1);
+}
+ISR(TIMER1_OVF_vect) // 2초 시간 지연 줄것-> 1초
+{
+	TCNT1 = OVERFLOW_1-94; // 125였던것을 250으로 두배 증가시켜서 2초로 할당 다시 1초 -> 약 0.75초 정도
+	tick_time_1++;
+	if(tick_time_1 == TPS_1) {
+		i++;
+		PORTA = ~PORTA;
+		tick_time_1 = 0;
+		
+	}
+}
+ISR(TIMER0_COMP_vect)
+{
+	if(i==30){
+		i=0;
+	}
+	OCR0=school[i];
+}
+
+///////////////////////////////
+
+#include<avr/io.h>
+#define F_CPU 16000000UL
+#include<util/delay.h>
+double gf[]={261.6,293.7,329.6,349.2,392.0,440.0,493.9,523.2,0};
+double school[]={392.0,392.0,440.0,440.0,392.0,392.0,329.6,329.6,392.0,392.0,329.6,329.6,293.7,293.7,293.7,0,392.0,392.0,440.0,440.0,392.0,392.0,329.6,329.6,392.0,392.0,293.7,329.6,261.6,261.6,261.6,0};
+int main()
+{
+	int n;
+	
+	DDRB |= (1<<DDB4);
+	TCCR0 = 0x1E;
+	TCCR1A= 0x00;
+	TCCR1B= 0x04;
+	
+	TCNT0 = 0;
+	TCNT1 = 65536 - 31250; // 0.5초
+	
+	for(n=0; n<31; n++){
+		OCR0 = (int)(16000000/(school[n]*256*2));
+		while((TIFR&0x04)==0){
+			;
+		}
+		TIFR |= 0x04;
+		TCNT1 = 65536 - 31250; // 0.5초
+		if(n==6)
+		{
+			_delay_ms(250);
+		}
+		else if(n==12)
+		{
+			_delay_ms(250);
+		}
+		else if(n==13)
+		{
+			_delay_ms(250);
+		}
+		else if(n==22)
+		{
+			_delay_ms(250);
+		}
+		else if(n==28)
+		{
+			_delay_ms(250);
+		}
+		else if(n==29)
+		{
+			_delay_ms(250);
+		}
+		else{
+			OCR0 = 0;
+			_delay_ms(250);
+		}
+	}
+	
+	TCCR0 = 0;
+	return 0;
+}
+	
+
+
+
